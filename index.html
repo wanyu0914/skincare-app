@@ -41,7 +41,7 @@
 
         <div class="form-group">
             <label>3. 輸入批號</label>
-            <input type="text" id="batch" placeholder="例如：20260128" value="預設">
+           <input type="text" id="batch" placeholder="請輸入批號">
         </div>
 
         <div class="form-group">
@@ -65,7 +65,7 @@
 
         function sendData() {
             const btn = document.getElementById("submitBtn");
-            const url = "您的_GAS_網頁應用程式網址"; // <--- 請務必換成您的 GAS 網址
+            const url = "https://script.google.com/macros/s/AKfycbxyttBLAqQ9nRKUyY3R-y4qZ_5xi55-veueN6CVdAJgUO4nFklaoPZNhnWX-_CZeXopmw/exec"; // <--- 請務必換成您的 GAS 網址
             
             const data = {
                 date: document.getElementById("date").value,
