@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保養品庫存異動系統</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        button:active { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 style="margin-top:0">庫存異動輸入</h2>
+        
+        <div class="form-group">
+            <label>1. 選擇日期</label>
+            <input type="date" id="date">
+        </div>
+
+        <div class="form-group">
+            <label>2. 品項名稱</label>
+            <select id="item">
+                <option>潔淨卸妝乳</option><option>溫和洗顏凝露</option><option>甘草調理水</option>
+                <option>撫紋精華乳</option><option>胜肽緊緻眼霜</option><option>保濕精華乳</option>
+                <option>淨白面膜(盒)</option><option>淨白面膜散片</option><option>B5青春精華露</option>
+                <option>玫瑰舒活面膜(盒)</option><option>玫瑰舒活面膜散片</option><option>Q10面膜(盒)</option>
+                <option>Q10面膜散片</option><option>美妍嫩膚面膜(盒)</option><option>美妍嫩膚面膜散片</option>
+                <option>經典海洋賦活乳霜</option><option>無瑕裸肌防曬CC霜</option><option>10%杏仁酸嫩膚精華露</option>
+                <option>保濕面膜(盒)</option><option>保濕面膜散片</option><option>Q-10 胺基酸洗面乳</option>
+                <option>植物神經醯胺精華露</option><option>PDRN白光修護精華</option><option>極緻淨白乳</option>
+                <option>玻尿酸精華液</option><option>晶鑽極潤修護滋養霜</option><option>複合果酸洗面乳</option>
+                <option>緊緻亮白水嫩凝膠</option><option>光感透亮防曬CC霜</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>3. 輸入批號</label>
+            <input type="text" id="batch" placeholder="例如：20260128" value="預設">
+        </div>
+
+        <div class="form-group">
+            <label>4. 異動類型</label>
+            <select id="type">
+                <option value="進貨">進貨 (+)</option>
+                <option value="出貨">出貨 (-)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>5. 輸入數量</label>
+            <input type="number" id="qty" placeholder="請輸入數字">
+        </div>
+
+        <button onclick="sendData()" id="submitBtn">確認提交</button>
+    </div>
+
+    <script>
+        document.getElementById('date').valueAsDate = new Date();
+
+        function sendData() {
+            const btn = document.getElementById("submitBtn");
+            const url = "您的_GAS_網頁應用程式網址"; // <--- 請務必換成您的 GAS 網址
+            
+            const data = {
+                date: document.getElementById("date").value,
+                item: document.getElementById("item").value,
+                batch: document.getElementById("batch").value,
+                type: document.getElementById("type").value,
+                qty: document.getElementById("qty").value
+            };
+
+            if(!data.qty) { alert("請輸入數量"); return; }
+            
+            btn.innerText = "傳送中...";
+            btn.disabled = true;
+
+            fetch(url, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(data)
+            }).then(() => {
+                alert("提交成功！資料已寫入進出明細");
+                document.getElementById("qty").value = "";
+                btn.innerText = "確認提交";
+                btn.disabled = false;
+            }).catch(err => {
+                alert("傳送失敗，請檢查網路");
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
