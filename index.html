@@ -2,16 +2,61 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>保養品庫存連動系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>保養品庫存管理系統</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f0f2f5; }
-        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h2 { margin-top: 0; color: #1877f2; text-align: center; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        select, input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 16px; background-color: #1877f2; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        body { 
+            font-family: -apple-system, "Helvetica Neue", sans-serif; 
+            padding: 15px; 
+            background-color: #f0f2f5; 
+            margin: 0;
+        }
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            max-width: 400px; 
+            margin: auto;
+            box-sizing: border-box; /* 確保 padding 不會撐開寬度 */
+        }
+        h2 { margin: 0 0 20px 0; color: #1877f2; text-align: center; font-size: 22px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; color: #444; }
+        
+        /* 統一輸入框樣式，並防止超出頁面 */
+        select, input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            box-sizing: border-box; /* 關鍵：寬度包含內邊距 */
+            display: block;
+            -webkit-appearance: none; /* 清除 iOS 預設樣式 */
+            background-color: #fff;
+        }
+        
+        /* 針對日期框的微調 */
+        input[type="date"] {
+            min-height: 45px;
+            font-family: inherit;
+        }
+
+        button { 
+            width: 100%; 
+            padding: 16px; 
+            background-color: #1877f2; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 10px;
+            box-shadow: 0 2px 4px rgba(24, 119, 242, 0.3);
+        }
+        button:active { background-color: #145dbf; transform: scale(0.98); }
         button:disabled { background-color: #ccc; }
     </style>
 </head>
@@ -48,15 +93,31 @@
     </div>
 
     <div class="form-group">
-        <label>5. 輸入數量</label>
-        <input type="number" id="qty" placeholder="請輸入數字">
+        <label>5. 用途</label>
+        <select id="purpose">
+            <option value="通路">通路</option>
+            <option value="其他">其他</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>6. 經手人</label>
+        <select id="handler">
+            <option value="Bolin">Bolin</option>
+            <option value="翰">翰</option>
+            <option value="瑜">瑜</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>7. 輸入數量</label>
+        <input type="number" id="qty" placeholder="請輸入數字" inputmode="numeric">
     </div>
 
     <button onclick="sendData()" id="submitBtn">確認提交</button>
 </div>
 
 <script>
-    // 已修正：將批號正確拆分為獨立選項
     const stockData = {
         "3-盒-保濕玻尿酸面膜": ["20250812J", "25I1005-1A", "25I1005-1B", "25I1005-1C", "25I1005-1D", "25I1005-1E", "25I1005-1F", "25I1005-1G", "25I1005-1H", "25I1005-1I", "25I1005-1J"],
         "3-玻尿酸精華液": ["251015", "251217"],
@@ -101,7 +162,6 @@
         const item = document.getElementById("item").value;
         const batchSelect = document.getElementById("batch");
         batchSelect.innerHTML = ""; 
-
         if (item && stockData[item]) {
             stockData[item].forEach(b => {
                 let opt = document.createElement("option");
@@ -125,10 +185,15 @@
             item: document.getElementById("item").value,
             batch: document.getElementById("batch").value,
             type: document.getElementById("type").value,
+            purpose: document.getElementById("purpose").value,
+            handler: document.getElementById("handler").value,
             qty: document.getElementById("qty").value
         };
 
-        if(!data.item || !data.qty) { alert("請填寫完整資訊"); return; }
+        if(!data.item || !data.qty || data.qty <= 0) { 
+            alert("請填寫完整資訊並確認數量正確"); 
+            return; 
+        }
         
         btn.innerText = "傳送中...";
         btn.disabled = true;
@@ -143,7 +208,8 @@
             btn.innerText = "確認提交";
             btn.disabled = false;
         }).catch(err => {
-            alert("失敗，請檢查設定");
+            alert("失敗，請檢查網路或設定");
+            btn.innerText = "確認提交";
             btn.disabled = false;
         });
     }
@@ -151,3 +217,6 @@
 
 </body>
 </html>
+
+  
+      
